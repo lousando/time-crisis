@@ -33,7 +33,8 @@
     "crisis",
     "organize",
     "timesheet",
-    "round"
+    "round",
+    "export"
   ],
   "bugs": {
     "url": "https://github.com/lousando/time-crisis/issues"
