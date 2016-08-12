@@ -2,7 +2,7 @@
   "name": "time-crisis",
   "version": "1.0.0",
   "description": "Timesheets organized.",
-  "main": "main.js",
+  "bin": "./main.js",
   "engine-strict": true,
   "engines": {
     "node": ">= 6.0.0"
