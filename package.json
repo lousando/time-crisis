@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Timesheets organized.",
   "main": "main.js",
+  "engine-strict": true,
+  "engines": {
+    "node": ">= 6.0.0"
+  },
   "scripts": {
     "start": "node main.js",
     "test": "mocha"
