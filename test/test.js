@@ -2,7 +2,6 @@
 
 let time_crisis = new require("../time-crisis")(process.env.TOGGL_TOKEN);
 let expect = require("chai").expect;
-let moment = require('moment');
 
 describe("Time Crisis", function () {
 
@@ -88,6 +87,6 @@ describe("Time Crisis", function () {
 		}
 
 		expect(is_token_provided).to.equal(false);
-	})
+	});
 
 });

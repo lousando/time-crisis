@@ -1,3 +1,5 @@
+"use strict";
+
 let TimeCrisis = {};
 let moment = require("moment");
 let fs = require("fs");

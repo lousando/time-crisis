@@ -1,3 +1,5 @@
+"use strict";
+
 let time_crisis;
 let debug = require("debug")("time-crisis");
 let moment = require("moment");
