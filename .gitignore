@@ -1,0 +1,5 @@
+# No Jetbrains Stuff
+.idea/
+
+# No Node Stuff
+node_modules/

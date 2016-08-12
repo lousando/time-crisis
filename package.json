@@ -1,0 +1,42 @@
+{
+  "name": "time-crisis",
+  "version": "1.0.0",
+  "description": "Timesheets organized.",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "mocha"
+  },
+  "author": "Louis Sandoval",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.9.0",
+    "debug": "^2.2.0",
+    "moment": "^2.14.1",
+    "toggl-api": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.2.2",
+    "mocha": "^2.5.3"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lousando/time-crisis.git"
+  },
+  "keywords": [
+    "toggl",
+    "time",
+    "crisis",
+    "organize",
+    "timesheet",
+    "round"
+  ],
+  "bugs": {
+    "url": "https://github.com/lousando/time-crisis/issues"
+  },
+  "homepage": "https://github.com/lousando/time-crisis#readme"
+}
