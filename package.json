@@ -4,6 +4,7 @@
   "description": "Timesheets organized.",
   "bin": "./main.js",
   "engine-strict": true,
+  "engineStrict": true,
   "engines": {
     "node": ">= 6.0.0"
   },
