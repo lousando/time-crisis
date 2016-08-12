@@ -1,5 +1,5 @@
   ```
-  Usage: main -t <token> [options]
+  Usage: time-crisis -t <token> [options]
 
   Timesheets organized.
 
