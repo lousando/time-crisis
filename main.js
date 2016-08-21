@@ -5,6 +5,7 @@ let time_crisis;
 let debug = require("debug")("time-crisis");
 let moment = require("moment");
 let commander = require("commander");
+let progress = require("progress");
 const VERSION = require("./package.json").version;
 const DESCRIPTION = require("./package.json").description;
 
@@ -32,31 +33,41 @@ function processTimeEntries(entries) {
 	debug("Got time entries");
 
 	let timesheet_entries = new Map();
-	let timesheet_promises = Array(entries.length);
+	let timesheet_promises = [];
+	const NUM_OF_ENTRIES = entries.length;
+	let bar = new progress("[:bar] :percent", {total: NUM_OF_ENTRIES});
 
 	debug("Begin parsing time entries");
-	for (let entryIndex = 0, numOfEntries = entries.length; entryIndex < numOfEntries; entryIndex++) {
-		let entry = entries[entryIndex];
+	for (let entry_index = 0; entry_index < NUM_OF_ENTRIES; entry_index++) {
+		let entry = entries[entry_index];
 
 		// a negative duration means an entry is in progress; do not touch these
 		if (Math.sign(entry.duration) !== -1) {
 			let entry_in_hours = time_crisis.convertSecondsToHours(entry.duration);
 
-			let clientDataPromise = timesheet_promises[entryIndex] = new Promise(function (resolve, reject) {
-				/**
-				 *    client data has to be extracted in a funny daisy chain way:
-				 *    [entry id] -> [project id] -> [client data]
-				 */
-				time_crisis.getProjectData(entry.pid).then(function (projectData) {
-					time_crisis.getClientData(projectData.cid).then(function (clientData) {
-						resolve(clientData);
+			let clientDataPromise = new Promise(function (resolve, reject) {
+				setTimeout(function () {
+					/**
+					 *    client data has to be extracted in a funny daisy chain way:
+					 *    [entry id] -> [project id] -> [client data]
+					 */
+					time_crisis.getProjectData(entry.pid).then(function (projectData) {
+						setTimeout(function () {
+							time_crisis.getClientData(projectData.cid).then(function (clientData) {
+								resolve(clientData);
+							});
+						}, 1000 * entry_index);
+					}).catch(function (error) {
+						reject(error);
 					});
-				}).catch(function (error) {
-					reject(error);
-				});
+				}, 1000 * entry_index);
 			});
 
+			timesheet_promises.push(clientDataPromise);
+
 			clientDataPromise.then(function (clientData) {
+				debug(`Processing entry: ${entry.description}`);
+
 				// create timesheet entry if one does not exist yet
 				if (!timesheet_entries.has(entry.description)) {
 					timesheet_entries.set(entry.description, {
@@ -77,14 +88,21 @@ function processTimeEntries(entries) {
 					 * (we'll get rate limited if we keep on trying)
 					 */
 					if (!time_crisis.hoursAreRounded(entry_in_hours)) {
-						time_crisis.updateTimeEntry(entry.id, {
-							// Toggl loves seconds
-							duration: time_crisis.convertHoursToSeconds(
-								time_crisis.roundHourToQuarterHour(entry_in_hours)
-							)
-						});
+						debug(`Updating entry: ${entry.description}`);
+						setTimeout(function () {
+							time_crisis.updateTimeEntry(entry.id, {
+								// Toggl loves seconds
+								duration: time_crisis.convertHoursToSeconds(
+									time_crisis.roundHourToQuarterHour(entry_in_hours)
+								)
+							});
+						}, 1000 * entry_index);
 					}
 				}
+
+				bar.tick();
+			}).catch(function (error) {
+				console.error(error);
 			});
 		} else {
 			console.info(`Warning: "${entry.description}" is currently running and was not be accounted for.`);

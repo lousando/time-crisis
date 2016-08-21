@@ -67,15 +67,6 @@ describe("Time Crisis", function () {
 		expect(rounded_hours).to.equal(0.75);
 	});
 
-	it("Can get time entries", function (done) {
-		time_crisis.getTimeEntries()
-			.then(function (response) {
-				let response_keys = Object.keys(response);
-				expect(response_keys).to.not.be.length(0);
-				done();
-			});
-	});
-
 	it("Requires that an Toggl token is passed", function () {
 		let is_token_provided;
 
