@@ -32,7 +32,7 @@ function processTimeEntries(entries) {
 	debug("Got time entries");
 
 	let timesheet_entries = new Map();
-	let timesheet_promises = Array(entries.length);
+	let timesheet_promises = [];
 
 	debug("Begin parsing time entries");
 	for (let entryIndex = 0, numOfEntries = entries.length; entryIndex < numOfEntries; entryIndex++) {
@@ -42,19 +42,25 @@ function processTimeEntries(entries) {
 		if (Math.sign(entry.duration) !== -1) {
 			let entry_in_hours = time_crisis.convertSecondsToHours(entry.duration);
 
-			let clientDataPromise = timesheet_promises[entryIndex] = new Promise(function (resolve, reject) {
-				/**
-				 *    client data has to be extracted in a funny daisy chain way:
-				 *    [entry id] -> [project id] -> [client data]
-				 */
-				time_crisis.getProjectData(entry.pid).then(function (projectData) {
-					time_crisis.getClientData(projectData.cid).then(function (clientData) {
-						resolve(clientData);
+			let clientDataPromise = new Promise(function (resolve, reject) {
+				setTimeout(function () {
+					/**
+					 *    client data has to be extracted in a funny daisy chain way:
+					 *    [entry id] -> [project id] -> [client data]
+					 */
+					time_crisis.getProjectData(entry.pid).then(function (projectData) {
+						setTimeout(function () {
+							time_crisis.getClientData(projectData.cid).then(function (clientData) {
+								resolve(clientData);
+							});
+						}, 1000 * entryIndex);
+					}).catch(function (error) {
+						reject(error);
 					});
-				}).catch(function (error) {
-					reject(error);
-				});
+				}, 1000 * entryIndex);
 			});
+
+			timesheet_promises.push(clientDataPromise);
 
 			clientDataPromise.then(function (clientData) {
 				debug(`Processing entry: ${entry.description}`);
@@ -80,12 +86,14 @@ function processTimeEntries(entries) {
 					 */
 					if (!time_crisis.hoursAreRounded(entry_in_hours)) {
 						debug(`Updating entry: ${entry.description}`);
-						time_crisis.updateTimeEntry(entry.id, {
-							// Toggl loves seconds
-							duration: time_crisis.convertHoursToSeconds(
-								time_crisis.roundHourToQuarterHour(entry_in_hours)
-							)
-						});
+						setTimeout(function () {
+							time_crisis.updateTimeEntry(entry.id, {
+								// Toggl loves seconds
+								duration: time_crisis.convertHoursToSeconds(
+									time_crisis.roundHourToQuarterHour(entry_in_hours)
+								)
+							});
+						}, 1000 * entryIndex);
 					}
 				}
 			}).catch(function (error) {
