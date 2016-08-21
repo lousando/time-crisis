@@ -57,6 +57,8 @@ function processTimeEntries(entries) {
 			});
 
 			clientDataPromise.then(function (clientData) {
+				debug(`Processing entry: ${entry.description}`);
+
 				// create timesheet entry if one does not exist yet
 				if (!timesheet_entries.has(entry.description)) {
 					timesheet_entries.set(entry.description, {
@@ -77,6 +79,7 @@ function processTimeEntries(entries) {
 					 * (we'll get rate limited if we keep on trying)
 					 */
 					if (!time_crisis.hoursAreRounded(entry_in_hours)) {
+						debug(`Updating entry: ${entry.description}`);
 						time_crisis.updateTimeEntry(entry.id, {
 							// Toggl loves seconds
 							duration: time_crisis.convertHoursToSeconds(
@@ -85,6 +88,8 @@ function processTimeEntries(entries) {
 						});
 					}
 				}
+			}).catch(function (error) {
+				console.error(error);
 			});
 		} else {
 			console.info(`Warning: "${entry.description}" is currently running and was not be accounted for.`);
