@@ -5,6 +5,7 @@ let time_crisis;
 let debug = require("debug")("time-crisis");
 let moment = require("moment");
 let commander = require("commander");
+let progress = require("progress");
 const VERSION = require("./package.json").version;
 const DESCRIPTION = require("./package.json").description;
 
@@ -33,10 +34,12 @@ function processTimeEntries(entries) {
 
 	let timesheet_entries = new Map();
 	let timesheet_promises = [];
+	const NUM_OF_ENTRIES = entries.length;
+	let bar = new progress("[:bar] :percent", {total: NUM_OF_ENTRIES});
 
 	debug("Begin parsing time entries");
-	for (let entryIndex = 0, numOfEntries = entries.length; entryIndex < numOfEntries; entryIndex++) {
-		let entry = entries[entryIndex];
+	for (let entry_index = 0; entry_index < NUM_OF_ENTRIES; entry_index++) {
+		let entry = entries[entry_index];
 
 		// a negative duration means an entry is in progress; do not touch these
 		if (Math.sign(entry.duration) !== -1) {
@@ -53,11 +56,11 @@ function processTimeEntries(entries) {
 							time_crisis.getClientData(projectData.cid).then(function (clientData) {
 								resolve(clientData);
 							});
-						}, 1000 * entryIndex);
+						}, 1000 * entry_index);
 					}).catch(function (error) {
 						reject(error);
 					});
-				}, 1000 * entryIndex);
+				}, 1000 * entry_index);
 			});
 
 			timesheet_promises.push(clientDataPromise);
@@ -93,9 +96,11 @@ function processTimeEntries(entries) {
 									time_crisis.roundHourToQuarterHour(entry_in_hours)
 								)
 							});
-						}, 1000 * entryIndex);
+						}, 1000 * entry_index);
 					}
 				}
+
+				bar.tick();
 			}).catch(function (error) {
 				console.error(error);
 			});
