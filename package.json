@@ -1,6 +1,6 @@
 {
   "name": "time-crisis",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Timesheets organized.",
   "bin": "./main.js",
   "engine-strict": true,
