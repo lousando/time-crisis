@@ -34,39 +34,29 @@ function processTimeEntries(entries) {
 	debug("Got time entries");
 
 	let timesheet_entries = new Map();
-	let timesheet_promises = [];
-	const NUM_OF_ENTRIES = entries.length;
-	let bar = new progress("[:bar] :percent", {total: NUM_OF_ENTRIES});
+	let bar = new progress("[:bar] :percent", {total: entries.length});
 
 	debug("Begin parsing time entries");
-	for (let entry_index = 0; entry_index < NUM_OF_ENTRIES; entry_index++) {
-		let entry = entries[entry_index];
-
+	let timesheet_promises = entries.map(function (entry, entry_index) {
 		// a negative duration means an entry is in progress; do not touch these
 		if (Math.sign(entry.duration) !== -1) {
 			let entry_in_hours = TimeCrisis.convertSecondsToHours(entry.duration);
 
-			let clientDataPromise = new Promise(function (resolve, reject) {
+			return new Promise(function (resolve, reject) {
 				setTimeout(function () {
 					/**
 					 *    client data has to be extracted in a funny daisy chain way:
 					 *    [entry id] -> [project id] -> [client data]
 					 */
-					a_time_crisis.getProjectData(entry.pid).then(function (projectData) {
-						setTimeout(function () {
-							a_time_crisis.getClientData(projectData.cid).then(function (clientData) {
-								resolve(clientData);
-							});
-						}, 1000 * entry_index);
-					}).catch(function (error) {
-						reject(error);
-					});
+					a_time_crisis.getProjectData(entry.pid)
+						.then(function (projectData) {
+							setTimeout(function () {
+								a_time_crisis.getClientData(projectData.cid)
+									.then(clientData => resolve(clientData));
+							}, 1000 * entry_index);
+						}).catch(reject);
 				}, 1000 * entry_index);
-			});
-
-			timesheet_promises.push(clientDataPromise);
-
-			clientDataPromise.then(function (clientData) {
+			}).then(function (clientData) {
 				debug(`Processing entry: ${entry.description}`);
 
 				// create timesheet entry if one does not exist yet
@@ -102,14 +92,12 @@ function processTimeEntries(entries) {
 				}
 
 				bar.tick();
-			}).catch(function (error) {
-				console.error(error);
-			});
+			}).catch(error => console.error(error));
 		} else {
 			console.info(`Warning: "${entry.description}" is currently running and was not be accounted for.`);
 			bar.tick();
 		}
-	}
+	});
 
 	if (commander.output) {
 		Promise.all(timesheet_promises).then(function () {
