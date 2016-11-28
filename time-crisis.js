@@ -1,22 +1,21 @@
 "use strict";
 
-let TimeCrisis = {};
 let moment = require("moment");
 let fs = require("fs");
 let TogglClient = require("toggl-api");
-let toggl_token;
 const EOL = require("os").EOL;
 
 /**
- * @exports
+ *
+ * @param token
+ * @constructor
  */
-module.exports = function (token) {
+let TimeCrisis = function (token) {
 	if (!token) {
 		throw new Error("time-crisis: No Toggl Token Provided");
 	}
 
-	toggl_token = token;
-	return TimeCrisis;
+	this.toggl_token = token;
 };
 
 TimeCrisis.convertHoursToSeconds = function (hours) {
@@ -36,11 +35,7 @@ TimeCrisis.convertSecondsToHours = function (seconds) {
 };
 
 TimeCrisis.hoursAreRounded = function (hours) {
-	if ((hours % 0.25) === 0) {
-		return true;
-	}
-
-	return false;
+	return (hours % 0.25) === 0;
 };
 
 TimeCrisis.roundHourToQuarterHour = function (hours) {
@@ -62,8 +57,8 @@ TimeCrisis.roundHourToQuarterHour = function (hours) {
  * @param {Moment} toDate - the closing date range
  * @returns {Promise}
  */
-TimeCrisis.getTimeEntries = function (fromDate = moment().day(0).format(), toDate = moment().format()) {
-	let toggl = new TogglClient({apiToken: toggl_token});
+TimeCrisis.prototype.getTimeEntries = function (fromDate = moment().day(0).format(), toDate = moment().format()) {
+	let toggl = new TogglClient({apiToken: this.toggl_token});
 
 	return new Promise(function (resolve, reject) {
 		toggl.getTimeEntries(fromDate, toDate, function (error, entries) {
@@ -81,8 +76,8 @@ TimeCrisis.getTimeEntries = function (fromDate = moment().day(0).format(), toDat
  * @param projectId
  * @returns {Promise}
  */
-TimeCrisis.getProjectData = function (projectId) {
-	let toggl = new TogglClient({apiToken: toggl_token});
+TimeCrisis.prototype.getProjectData = function (projectId) {
+	let toggl = new TogglClient({apiToken: this.toggl_token});
 
 	return new Promise(function (resolve, reject) {
 		toggl.getProjectData(projectId, function (error, projectData) {
@@ -100,8 +95,8 @@ TimeCrisis.getProjectData = function (projectId) {
  * @param clientId
  * @returns {Promise}
  */
-TimeCrisis.getClientData = function (clientId) {
-	let toggl = new TogglClient({apiToken: toggl_token});
+TimeCrisis.prototype.getClientData = function (clientId) {
+	let toggl = new TogglClient({apiToken: this.toggl_token});
 
 	return new Promise(function (resolve, reject) {
 		toggl.getClientData(clientId, function (error, clientData) {
@@ -120,8 +115,8 @@ TimeCrisis.getClientData = function (clientId) {
  * @param {Object} entryData
  * @returns {Promise}
  */
-TimeCrisis.updateTimeEntry = function (entryId, entryData) {
-	let toggl = new TogglClient({apiToken: toggl_token});
+TimeCrisis.prototype.updateTimeEntry = function (entryId, entryData) {
+	let toggl = new TogglClient({apiToken: this.toggl_token});
 
 	return new Promise(function (resolve, reject) {
 		toggl.updateTimeEntry(entryId, entryData, function (error) {
@@ -148,3 +143,8 @@ TimeCrisis.outputToCsv = function (entries, filename) {
 
 	fs.writeFileSync(filename, stringToWrite);
 };
+
+/**
+ * @exports
+ */
+module.exports = TimeCrisis;
