@@ -42,7 +42,7 @@ function processTimeEntries(entries) {
 		if (Math.sign(entry.duration) !== -1) {
 			let entry_in_hours = TimeCrisis.convertSecondsToHours(entry.duration);
 
-			return new Promise(function (resolve, reject) {
+			return new Promise(function (resolve) {
 				setTimeout(function () {
 					/**
 					 *    client data has to be extracted in a funny daisy chain way:
@@ -54,7 +54,9 @@ function processTimeEntries(entries) {
 								a_time_crisis.getClientData(projectData.cid)
 									.then(clientData => resolve(clientData));
 							}, 1000 * entry_index);
-						}).catch(reject);
+						})
+						// a project was not assigned to this entry; default name to empty
+						.catch(() => resolve({name: ""}));
 				}, 1000 * entry_index);
 			}).then(function (clientData) {
 				debug(`Processing entry: ${entry.description}`);
