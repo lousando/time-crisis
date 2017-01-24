@@ -66,12 +66,12 @@ function processTimeEntries(entries) {
 					timesheet_entries.set(entry.description, {
 						clientName: clientData.name,
 						description: entry.description,
-						daysOfWeek: new Array(7)
+						daysOfWeek: new Array(7).fill(0)
 					});
 				}
 
 				let saved_entry = timesheet_entries.get(entry.description);
-				saved_entry.daysOfWeek[moment(entry.start).day()] = TimeCrisis.roundHourToQuarterHour(entry_in_hours);
+				saved_entry.daysOfWeek[moment(entry.at).day()] += TimeCrisis.roundHourToQuarterHour(entry_in_hours);
 
 				timesheet_entries.set(entry.description, saved_entry);
 
