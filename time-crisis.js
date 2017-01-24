@@ -135,7 +135,7 @@ TimeCrisis.prototype.updateTimeEntry = function (entryId, entryData) {
  * @param {String} filename
  */
 TimeCrisis.outputToCsv = function (entries, filename) {
-	let stringToWrite = "";
+	let stringToWrite = `Client,Description,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday${EOL}`;
 
 	entries.forEach(function (entry) {
 		stringToWrite += `${entry.clientName},${entry.description},${entry.daysOfWeek.join(",")}${EOL}`;
