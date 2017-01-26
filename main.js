@@ -37,6 +37,7 @@ function processTimeEntries(entries) {
 	let bar = new progress("[:bar] :percent", {total: entries.length});
 
 	debug("Begin parsing time entries");
+
 	let timesheet_promises = entries.map(function (entry, entry_index) {
 		// a negative duration means an entry is in progress; do not touch these
 		if (Math.sign(entry.duration) !== -1) {
