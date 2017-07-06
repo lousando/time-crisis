@@ -25,6 +25,7 @@ module.exports = {
 		"strict": [
 			"error",
 			"safe"
-		]
+		],
+		"no-console": "warn"
 	}
 };
