@@ -1,5 +1,3 @@
-"use strict";
-
 let moment = require("moment");
 let fs = require("fs");
 let TogglClient = require("toggl-api");
