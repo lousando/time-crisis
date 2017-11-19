@@ -4,6 +4,13 @@ module.exports = {
 		"node": true,
 		"mocha": true
 	},
+	"parserOptions": {
+		"ecmaVersion": 8,
+		"sourceType": "module",
+		"ecmaFeatures": {
+			"impliedStrict": true
+		}
+	},
 	"extends": "eslint:recommended",
 	"rules": {
 		"indent": [
