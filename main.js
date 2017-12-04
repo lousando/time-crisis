@@ -55,6 +55,7 @@ async function _processTimeEntries(entries) {
 			} catch (e) {
 				// a project was not assigned to this entry; default name to empty
 				projectData = {name: ""};
+				clientData = {name: ""};
 			}
 
 			debug(`Processing entry: ${entry.description}`);
