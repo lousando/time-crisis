@@ -4,22 +4,29 @@ let a_time_crisis;
 let debug = require("debug")("time-crisis");
 let moment = require("moment");
 let TimeCrisis = require("./time-crisis");
-let commander = require("commander");
+let yargs = require("yargs");
 let progress = require("progress");
 const VERSION = require("./package.json").version;
-const DESCRIPTION = require("./package.json").description;
 
-commander
+let args = yargs
+	// version
 	.version(VERSION)
-	.description(DESCRIPTION)
+	// usage
 	.usage("-t <token> [options]")
-	.option("-t, --token <token>", "Toggl API token")
-	.option("-o, --output <filename>", "output to a csv file")
-	.option("-u, --update", "save rounded entries to Toggl")
-	.parse(process.argv);
+	// token
+	.alias("t", "token")
+	.describe("t", "Toggl API token")
+	// output
+	.alias("o", "output")
+	.describe("o", "output to a csv file")
+	// update
+	.alias("u", "update")
+	.boolean("u")
+	.describe("u", "save rounded entries to Toggl")
+	.argv;
 
-if (commander.token) {
-	a_time_crisis = new TimeCrisis(commander.token);
+if (args.token) {
+	a_time_crisis = new TimeCrisis(args.token);
 	a_time_crisis
 		.getTimeEntries()
 		.then(_processTimeEntries)
@@ -27,7 +34,7 @@ if (commander.token) {
 			console.error(error);
 		});
 } else {
-	commander.help();
+	yargs.showHelp("log");
 }
 
 async function _processTimeEntries(entries) {
@@ -71,12 +78,12 @@ async function _processTimeEntries(entries) {
 
 			let saved_entry = timesheet_entries.get(entry.description);
 			saved_entry.daysOfWeek[
-				moment(entry.start).day()
+					moment(entry.start).day()
 			] += TimeCrisis.roundHourToQuarterHour(entry_in_hours);
 
 			timesheet_entries.set(entry.description, saved_entry);
 
-			if (commander.update) {
+			if (args.update) {
 				/**
 				 * do not bother trying to save something that's already rounded
 				 * (we'll get rate limited if we keep on trying)
@@ -100,10 +107,10 @@ async function _processTimeEntries(entries) {
 		bar.tick();
 	});
 
-	if (commander.output) {
+	if (args.output) {
 		await Promise.all(timesheet_promises);
 		debug("Exporting to CSV");
-		TimeCrisis.outputToCsv(timesheet_entries, commander.output);
+		TimeCrisis.outputToCsv(timesheet_entries, args.output);
 	} else {
 		debug("Not exporting");
 		await Promise.all(timesheet_promises);
