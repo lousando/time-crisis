@@ -3,3 +3,6 @@
 
 # No Node Stuff
 node_modules/
+
+# no test ouput csv
+test/test.csv
