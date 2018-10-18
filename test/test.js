@@ -1,5 +1,3 @@
-
-
 let TimeCrisis = require("../time-crisis");
 let expect = require("chai").expect;
 
