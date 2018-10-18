@@ -1,5 +1,7 @@
-# No Jetbrains Stuff
-.idea/
+# jetbrains Stuff
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/tasks.xml
 
 # No Node Stuff
 node_modules/
