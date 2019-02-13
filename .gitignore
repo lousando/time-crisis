@@ -1,7 +1,5 @@
 # jetbrains Stuff
-.idea/workspace.xml
-.idea/usage.statistics.xml
-.idea/tasks.xml
+.idea/
 
 # No Node Stuff
 node_modules/
