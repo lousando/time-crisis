@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "node"
   - "lts/*"
-  - "7.10.1"
+  - "8.10.0"
 os:
   - linux
   - osx
