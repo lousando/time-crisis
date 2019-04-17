@@ -11,24 +11,14 @@ module.exports = {
 			"impliedStrict": true
 		}
 	},
-	"extends": "eslint:recommended",
+	"plugins": [
+		"prettier"
+	],
+	"extends": [
+		"eslint:recommended",
+		"prettier"
+	],
 	"rules": {
-		"indent": [
-			"error",
-			"tab"
-		],
-		"linebreak-style": [
-			"error",
-			"unix"
-		],
-		"quotes": [
-			"error",
-			"double"
-		],
-		"semi": [
-			"error",
-			"always"
-		],
 		"strict": [
 			"error",
 			"safe"
