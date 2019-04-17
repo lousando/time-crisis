@@ -6,3 +6,6 @@ node_modules/
 
 # no test ouput csv
 test/test.csv
+
+# don't publish coverage
+coverage
