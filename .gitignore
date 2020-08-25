@@ -1,10 +1,11 @@
 # jetbrains Stuff
-.idea/workspace.xml
-.idea/usage.statistics.xml
-.idea/tasks.xml
+.idea/
 
 # No Node Stuff
 node_modules/
 
 # no test ouput csv
 test/test.csv
+
+# don't publish coverage
+coverage
