@@ -1,10 +1,23 @@
-# jetbrains Stuff
-.idea/workspace.xml
-.idea/usage.statistics.xml
-.idea/tasks.xml
+# jetbrains
+.idea
+
+# yarn zero installs
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 # No Node Stuff
 node_modules/
 
 # no test ouput csv
 test/test.csv
+
+# coverage
+coverage
+
+# npm
+package-lock.json
